@@ -18,7 +18,32 @@ using std::vector;
 Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { return processes_; }
+vector<Process>& System::Processes() { 
+    vector<int> pids = LinuxParser::Pids();
+    for (int pid : pids) {
+        // 1. Get User
+        string user = LinuxParser::User(pid);
+
+        // 2. Get CommandLine
+        string commandLine = LinuxParser::Command(pid);
+
+        // 3. Get CPU Utilization
+        float cpuUtilization = 0.0; //LinuxParser::CpuUtilization(pid);
+
+        // 4. Get RAM
+        string ram = LinuxParser::Ram(pid);
+
+        // 5. Get Uptime
+        long int uptime = LinuxParser::UpTime(pid);
+
+        // 6. Create instance of the Process
+        Process p(pid, user, commandLine, cpuUtilization, ram, uptime);
+
+        // 7. Add process to the processes vector
+        processes_.push_back(p);
+    }
+    return processes_; 
+}
 
 // TODO: Return the system's kernel identifier (string)
 std::string System::Kernel() { return LinuxParser::Kernel(); }
