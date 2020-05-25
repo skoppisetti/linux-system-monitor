@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <iostream>
 
 #include "linux_parser.h"
 
@@ -107,17 +109,46 @@ long LinuxParser::UpTime() {
 }
 
 // TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
+long LinuxParser::Jiffies() { 
+  vector<string> cpureadings = LinuxParser::CpuUtilization();
+  return std::stol(cpureadings[0]) + std::stol(cpureadings[1]) 
+    + std::stol(cpureadings[2]) + std::stol(cpureadings[3]) 
+    + std::stol(cpureadings[4]) + std::stol(cpureadings[5])
+    + std::stol(cpureadings[6]) + std::stol(cpureadings[7]); 
+}
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(int pid) { 
+  // std::cout << "Calculating active jiffies for : " << pid << std::endl;
+  vector<string> pstat{22};
+  string line;
+  std::ifstream stream(kProcDirectory + std::to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> pstat[0] >> pstat[1] >> pstat[2] >> pstat[3] >> pstat[4] >> pstat[5] >> pstat[6] >> pstat[7]
+      >> pstat[8] >> pstat[9] >> pstat[10] >> pstat[11] >> pstat[12] >> pstat[13] >> pstat[14] >> pstat[15]
+      >> pstat[16] >> pstat[17] >> pstat[18] >> pstat[19] >> pstat[20] >> pstat[21];
+    // std::cout << "|" << pstat[13] << "|" << pstat[14] << "|" << pstat[15] << "|" << pstat[16] << "|" <<std::endl;
+    return std::stol(pstat[13]) + std::stol(pstat[14]) + std::stol(pstat[15]) + std::stol(pstat[16]);
+  }
+  return 0; 
+}
 
 // TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+long LinuxParser::ActiveJiffies() { 
+  vector<string> cpureadings = LinuxParser::CpuUtilization();
+  return std::stol(cpureadings[0]) + std::stol(cpureadings[1]) 
+    + std::stol(cpureadings[2]) + std::stol(cpureadings[5])
+    + std::stol(cpureadings[6]) + std::stol(cpureadings[7]);  
+}
 
 // TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+long LinuxParser::IdleJiffies() {
+  vector<string> cpureadings = LinuxParser::CpuUtilization();
+  return std::stol(cpureadings[3]) + std::stol(cpureadings[4]); 
+}
 
 // TODO: Read and return CPU utilization
 //      user   nice  system  idle    iowait  irq  softirq  steal   guest   guest_nice
@@ -204,7 +235,7 @@ string LinuxParser::Ram(int pid) {
       if(key == "VmSize:") {
         string size, unit;
         std::istringstream memvaluestream(value);
-        memvaluestream >> size, unit;
+        memvaluestream >> size >> unit;
         return std::to_string(std::stoi(size)/1024);
       }
     }
@@ -250,4 +281,17 @@ string LinuxParser::User(int pid) {
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid) { 
+  vector<string> pstat{22};
+  string line;
+  std::ifstream stream(kProcDirectory + std::to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream>> pstat[0] >> pstat[1] >> pstat[2] >> pstat[3] >> pstat[4] >> pstat[5] >> pstat[6] >> pstat[7]
+      >> pstat[8] >> pstat[9] >> pstat[10] >> pstat[11] >> pstat[12] >> pstat[13] >> pstat[14] >> pstat[15]
+      >> pstat[16] >> pstat[17] >> pstat[18] >> pstat[19] >> pstat[20] >> pstat[21];
+    return std::stol(pstat[21]) / sysconf(_SC_CLK_TCK);
+  }
+  return 0; 
+}

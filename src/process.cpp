@@ -23,7 +23,7 @@ Process::Process(
 int Process::Pid() { return pid_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return cpuUtilization_; }
+float Process::CpuUtilization() { return cpuUtilization_;  }
 
 // TODO: Return the command that generated this process
 string Process::Command() { return command_; }
@@ -40,5 +40,6 @@ long int Process::UpTime() { return uptime_; }
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
-    return cpuUtilization_ < a.cpuUtilization_ ? true : false;
+    // return cpuUtilization_ < a.cpuUtilization_ ? true : false;
+    return std::stoi(ram_) < std::stoi(a.ram_) ? true : false;
 } 

@@ -27,17 +27,22 @@ vector<Process>& System::Processes() {
         // 2. Get CommandLine
         string commandLine = LinuxParser::Command(pid);
 
-        // 3. Get CPU Utilization
-        float cpuUtilization = 0.0; //LinuxParser::CpuUtilization(pid);
-
-        // 4. Get RAM
+        // 3. Get RAM
         string ram = LinuxParser::Ram(pid);
 
-        // 5. Get Uptime
-        long int uptime = LinuxParser::UpTime(pid);
+        // 4. Get Uptime
+        long int process_uptime = LinuxParser::UpTime(pid);
+
+        // 5. Get CPU Utilization
+        long system_uptime = LinuxParser::UpTime();
+        long total_time = LinuxParser::ActiveJiffies(pid);
+        long time_elapsed = system_uptime - process_uptime;
+        float cpuUtilization = ((total_time / sysconf(_SC_CLK_TCK)) / (float)time_elapsed) * 100;
+        
+        // float cpuUtilization = 0.0; //LinuxParser::CpuUtilization(pid);
 
         // 6. Create instance of the Process
-        Process p(pid, user, commandLine, cpuUtilization, ram, uptime);
+        Process p(pid, user, commandLine, cpuUtilization, ram, process_uptime);
 
         // 7. Add process to the processes vector
         processes_.push_back(p);
