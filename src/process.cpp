@@ -10,7 +10,14 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid) : pid_(pid) {}
+Process::Process(
+    int pid,
+    string user, 
+    string command,
+    float cpuUtilization,
+    string ram,
+    long int uptime) 
+    : pid_(pid), cpuUtilization_(cpuUtilization), command_(command), ram_(ram), user_(user), uptime_(uptime) {}
 
 // TODO: Return this process's ID
 int Process::Pid() { return pid_; }
