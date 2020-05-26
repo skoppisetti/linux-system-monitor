@@ -1,15 +1,10 @@
-#include <unistd.h>
-#include <cctype>
-#include <sstream>
 #include <string>
-#include <vector>
-#include <iostream>
+#include <stdexcept>
 
 #include "process.h"
 
 using std::string;
 using std::to_string;
-using std::vector;
 
 Process::Process(
     int pid,
@@ -42,5 +37,13 @@ long int Process::UpTime() { return uptime_; }
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
     // return a.cpuUtilization_ < cpuUtilization_? true : false;
-    return std::stoi(ram_) < std::stoi(a.ram_) ? true : false;
+    bool pred = true;
+    try {
+        int lram = std::stoi(ram_);
+        int rram = std::stoi(a.ram_);
+        pred = lram < rram;
+    } catch (std::invalid_argument& e) {
+        pred = false;
+    }
+    return pred;
 } 
