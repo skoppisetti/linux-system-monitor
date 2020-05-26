@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "process.h"
 #include "processor.h"
@@ -37,16 +38,17 @@ vector<Process>& System::Processes() {
         long system_uptime = LinuxParser::UpTime();
         long total_time = LinuxParser::ActiveJiffies(pid);
         long time_elapsed = system_uptime - process_uptime;
-        float cpuUtilization = ((total_time / sysconf(_SC_CLK_TCK)) / (float)time_elapsed) * 100;
-        
-        // float cpuUtilization = 0.0; //LinuxParser::CpuUtilization(pid);
-
+        float cpuUtilization;
+        if(time_elapsed <= 0) cpuUtilization = 0;
+        else cpuUtilization = ((total_time / sysconf(_SC_CLK_TCK)) / (float)time_elapsed);
+    
         // 6. Create instance of the Process
         Process p(pid, user, commandLine, cpuUtilization, ram, process_uptime);
 
         // 7. Add process to the processes vector
         processes_.push_back(p);
     }
+    std::sort (processes_.begin(), processes_.end());
     return processes_; 
 }
 

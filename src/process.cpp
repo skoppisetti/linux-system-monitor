@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "process.h"
 
@@ -40,6 +41,6 @@ long int Process::UpTime() { return uptime_; }
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
-    // return cpuUtilization_ < a.cpuUtilization_ ? true : false;
+    // return a.cpuUtilization_ < cpuUtilization_? true : false;
     return std::stoi(ram_) < std::stoi(a.ram_) ? true : false;
 } 
