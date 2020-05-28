@@ -5,9 +5,14 @@
 #include "processor.h"
 #include "linux_parser.h"
 
-// TODO: Return the aggregate CPU utilization
-//      user   nice  system  idle    iowait  irq  softirq  steal   guest   guest_nice
-// cpu  12684  1928  5297    265504  1343    0    134      0       0       0
+/**
+ * Function to caluclate the processor utilization using the tick information
+ * 
+ *      user   nice  system  idle    iowait  irq  softirq  steal   guest   guest_nice
+ * cpu  12684  1928  5297    265504  1343    0    134      0       0       0
+ * 
+ * @return float, the CPU utilization
+ */
 float Processor::Utilization() { 
     long int total = LinuxParser::Jiffies();
     long int cpu_inactive = LinuxParser::IdleJiffies();

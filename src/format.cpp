@@ -6,11 +6,12 @@
 
 using std::string;
 
-// TODO: Complete this helper function
-// INPUT: Long int measuring seconds
-// OUTPUT: HH:MM:SS
-// REMOVE: [[maybe_unused]] once you define the function
-// string Format::ElapsedTime(long seconds[[maybe_unused]]) { 
+/**
+ * Helper function to format seconds into HH:MM:SS format
+ * 
+ * @param seconds: The time in seconds which needs to be formatted
+ * @return a string in HH:MM:SS format
+ */
 string Format::ElapsedTime(long seconds) { 
     double hr_frac = seconds/3600.0;
     double min_frac = seconds/60.0;
